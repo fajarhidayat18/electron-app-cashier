@@ -1,16 +1,25 @@
 const { ipcRenderer } = require("electron");
+const fs = require("fs");
+const direktoryPath = "./src/data";
+const FilePath = "./src/data/products.json";
 // let { remote } = require("electron");
 // const { PosPrinter } = remote.require("electron-pos-printer");
 // const { PosPrinter } = require("electron-pos-printer"); //dont work in production (??)
-// const path = require("path");
+if (!fs.existsSync(direktoryPath)) fs.mkdirSync(direktoryPath);
+if (!fs.existsSync(FilePath)) fs.writeFileSync(FilePath, "[]", "utf-8");
 
-let products = [];
+// let products = [];
+const file = fs.readFileSync(FilePath, "utf-8");
+const products = JSON.parse(file);
 let carts = [];
+
 // =========================================================
 const cartContainer = document.getElementById("cartContainer");
 const listProducts = document.getElementById("listProducts");
 const cartWrapper = document.getElementById("wrapper-cart");
 const formItem = document.getElementById("formItem");
+// =========================================================
+displayData();
 // =========================================================
 document.getElementById("search").addEventListener("keyup", (e) => {
   const searchTerm = e.target.value.toLowerCase(); // Konversi input pencarian ke huruf kecil
@@ -34,8 +43,15 @@ formItem.addEventListener("submit", (e) => {
   let price = priceProduct.value;
   const id = `${Date.now()}`;
 
+  const data = handleAddProduct(id, name, parseInt(price));
   // adding datas
-  products.push(handleAddProduct(id, name, parseInt(price)));
+
+  products.push(data);
+  // console.log(products);
+  fs.writeFile(FilePath, JSON.stringify(products), (err) => {
+    if (err) throw err;
+    console.log("ok");
+  });
 
   // clear form
   name = nameProduct.value = "";
@@ -160,9 +176,9 @@ cartContainer.addEventListener("click", (e) => {
 });
 // =========================================================
 // Show Data after add or delete list product
-function displayData(data = products) {
+function displayData() {
   listProducts.innerHTML = ""; // Mengosongkan kontainer
-  data.forEach((data) => {
+  products.forEach((data) => {
     listProducts.innerHTML += `
     <div class="grid grid-cols-3 items-center place-items-start border-b border-neutral-300 py-3" id="${
       data.id
@@ -232,6 +248,7 @@ function handleDeleteProdcut(id) {
   const result = products.findIndex((data) => data.id === `${id}`);
   if (result !== -1) {
     products.splice(result, 1);
+    fs.writeFileSync(FilePath, JSON.stringify(products));
   }
 }
 // function add to Cart
