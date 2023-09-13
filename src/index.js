@@ -173,7 +173,7 @@ function displayData(data = products) {
       )}</div>
       <div class="text-base flex gap-2">
           <button
-            class="add-to-cart p-1 rounded bg-blue-500 text-white flex text-white"
+            class="add-to-cart p-1 rounded bg-blue-500 text-white flex"
             id="addToCart"
             data-feather="shopping-cart" />
           <button
