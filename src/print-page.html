@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>Document</title>
+    <link href="./index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <section class="grid place-items-center place-content-center">
+      <h1 class="text-xl font-bold mb-4 py-2 border-dotted border-b-2 flex">
+        struk pembayaran
+      </h1>
+      <div
+        class="flex flex-col border-b-2 pb-2 border-dotted mb-4"
+        id="wrapperList">
+        <!-- <div class="grid grid-cols-[1fr_0.1fr_0.4fr_0.5fr] gap-4">
+          <span>buah naga</span>
+          <span>1</span>
+          <span>20000</span>
+          <span>20000</span>
+        </div> -->
+      </div>
+      <div class="flex self-end">
+        <span
+          >Total :
+          <span class="text-lg font-bold" id="totalPrice">2000</span></span
+        >
+      </div>
+      <button
+        id="cetak"
+        class="mt-4 py-2 px-4 rounded-md border-blue-500 border text-blue-500">
+        cetak
+      </button>
+    </section>
+    <script>
+      const { ipcRenderer } = require("electron");
+      const wrapperList = document.getElementById("wrapperList");
+      const totalPrice = document.getElementById("totalPrice");
+
+      // Tanggapi pesan dari jendela utama untuk menerima data
+      ipcRenderer.on("data-ke-jendela-baru", (event, data) => {
+        data.forEach((data) => {
+          wrapperList.innerHTML += `
+            <div class="grid grid-cols-[1fr_0.1fr_0.4fr_0.5fr] gap-4">
+          <span>${data.name}</span>
+          <span>${data.amount}</span>
+          <span>${formatCurrencyToRupiah(data.price)}</span>
+          <span>${formatCurrencyToRupiah(data.amountPrice)}</span>
+        </div>
+            `;
+        });
+        totalPrice.innerText = formatCurrencyToRupiah(
+          data.reduce(
+            (accumulator, currentValue) =>
+              accumulator + currentValue.amountPrice,
+            0
+          )
+        );
+      });
+
+      // Tanggapi klik tombol Cetak
+      document.getElementById("cetak").addEventListener("click", (e) => {
+        e.target.remove();
+        window.print(); // Memicu pencetakan
+      });
+
+      function formatCurrencyToRupiah(amount) {
+        try {
+          return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0, // Opsional, untuk menghapus desimal jika tidak ada pecahan
+          }).format(amount);
+        } catch (error) {
+          console.error(
+            "Terjadi kesalahan dalam mengonversi nilai ke Rupiah:",
+            error
+          );
+          return amount; // Mengembalikan nilai asli jika terjadi kesalahan
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Kasir Buah</title>
+    <link href="./index.css" rel="stylesheet" />
+    <style>
+      .feather {
+        width: 14px;
+        height: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main
+      class="grid grid-cols-3 grid-rows-[125px_480px] gap-4 fixed p-4 bg-slate-100">
+      <!-- form -->
+      <form
+        action=""
+        class="grid grid-cols-1 sm:grid-cols-3 item-center justify-between gap-4 col-span-2 bg-white p-4 rounded-md"
+        id="formItem">
+        <div class="flex flex-col justify-between">
+          <label for="name" class="text-sm font-medium text-neutral-500"
+            >Nama Buah</label
+          >
+          <input
+            type="text"
+            name="name"
+            id="nameItem"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md"
+            required />
+        </div>
+
+        <div class="flex flex-col justify-between">
+          <label for="weight" class="text-sm font-medium text-neutral-500"
+            >Harga</label
+          >
+          <input
+            type="number"
+            name="weight"
+            id="priceItem"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md"
+            required />
+        </div>
+
+        <button
+          type="submit"
+          class="flex self-end items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md focus:outline-blue-300">
+          Tambah Buah
+        </button>
+      </form>
+      <!-- list data -->
+      <div
+        class="border border-neutral-300 rounded-md p-4 shadow-md row-start-2 col-span-2 gap-4 bg-white">
+        <div class="flex flex-col gap-1 mb-4">
+          <input
+            type="text"
+            name="search"
+            id="search"
+            class="p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md"
+            placeholder="Bari Buah" />
+        </div>
+
+        <div class="flex flex-col w-full" id="tableItems">
+          <div class="flex justify-between">
+            <div
+              class="grid grid-cols-3 items-start w-full border-b border-neutral-300 py-4">
+              <div class="text-left font-semibold text-lg">Nama Buah</div>
+              <div class="text-left font-semibold text-lg">Harga Buah</div>
+              <div class="text-left font-semibold text-lg">aksi</div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col grow-0 overflow-y-auto h-[460px]"
+            id="listProducts">
+            <!-- 
+              <div
+                class="grid grid-cols-3 items-center place-items-start border-b border-neutral-300 py-3">
+                <div class="text-base" id="nameProduct">Buah Naga</div>
+                <div class="text-base" id="priceProduct">30.000</div>
+                <div class="text-base flex gap-2">
+                  <button
+                    class="add-to-cart p-1 rounded bg-blue-500 text-white flex text-white"
+                    id="addToCart"
+                    data-feather="shopping-cart" />
+                  <button
+                    class="delete p-1 rounded bg-red-500 text-white flex"
+                    id="deleteProduct"
+                    data-feather="x-circle" />
+                </div>
+              </div>
+            -->
+          </div>
+        </div>
+      </div>
+      <!-- cart -->
+      <div
+        class="grid grid-rows-[0.1fr_1fr_3rem] h border-neutral-300 bg-white shadow-md rounded-md border row-start-1 row-end-3 col-start-3 p-4"
+        id="cartContainer">
+        <div>
+          <div class="py-1 px-3 flex justify-between">
+            <h2 class="font-bold text-lg">total</h2>
+            <h2 class="font-bold text-lg" id="totalPrice">Rp.0</h2>
+          </div>
+
+          <div
+            class="py-1 px-3 flex justify-between border-b border-neutral-400">
+            <h2 class="font-medium text-lg">jumlah berat</h2>
+            <h2 class="font-medium text-lg" id="totalWeight">0</h2>
+          </div>
+        </div>
+
+        <div class="overflow-y-scroll" id="wrapper-cart">
+          <!--  
+            <div class="py-5 px-3 flex justify-between items-center">
+              <div class="flex flex-col">
+                <span class="font-bold text-base" id="nameCart">buah naga</span>
+                <span class="font-medium text-lg" id="nameCart">30.000</span>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  class="rounded-lg border border-green-500 p-1 flex"
+                  data-feather="minus-circle">
+                  <i data-feather="minus-circle"></i>
+                </button>
+                <span class="amount font-medium text-lg">1</span>
+                <button
+                  class="rounded-lg border border-green-500 p-1 flex"
+                  data-feather="plus-circle">
+                  <i data-feather="plus-circle"></i>
+                </button>
+              </div>
+            </div>
+          -->
+        </div>
+
+        <button
+          class="clear flex items-center justify-center py-2 rounded-md bg-white text-blue-500 border border-blue-500 hover:bg-blue-500 hover:text-white"
+          id="buka-jendela-baru">
+          bayar
+        </button>
+      </div>
+    </main>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
