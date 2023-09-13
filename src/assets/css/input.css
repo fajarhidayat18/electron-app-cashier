@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[data-feather="shopping-cart"] {
+  content: url(./assets/icons/shopping-cart.svg);
+  height: 24px;
+}
+[data-feather="x-circle"] {
+  content: url(./assets/icons/x-circle.svg);
+  height: 24px;
+}
+[data-feather="minus-circle"] {
+  content: url(./assets/icons/minus-circle.svg);
+  height: 24px;
+}
+[data-feather="plus-circle"] {
+  content: url(./assets/icons/plus-circle.svg);
+  height: 24px;
+}
+
+* {
+  /* font-family: "Poppins", sans-serif; */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
