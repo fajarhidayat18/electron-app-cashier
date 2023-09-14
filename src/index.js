@@ -1,3 +1,4 @@
+
 // call core module
 const { ipcRenderer, remote } = require("electron");
 const fs = require("fs");
@@ -22,6 +23,7 @@ const file = fs.readFileSync(FilePath, "utf-8");
 const products = JSON.parse(file);
 let carts = [];
 
+
 // =========================================================
 const cartContainer = document.getElementById("cartContainer");
 const listProducts = document.getElementById("listProducts");
@@ -34,6 +36,7 @@ const formItem = document.getElementById("formItem");
 displayProducts(products, listProducts);
 
 // =========================================================
+
 document.getElementById("search").addEventListener("keyup", (e) => {
   const searchTerm = e.target.value.toLowerCase(); // Konversi input pencarian ke huruf kecil
   const filterProducts = products.filter((product) => {
@@ -75,15 +78,18 @@ formItem.addEventListener("submit", (e) => {
   displayProducts(products, listProducts);
 });
 // =========================================================
+
 // click bussiness in list product
 listProducts.addEventListener("click", (e) => {
   // add data to cart
   if (e.target.classList.contains("add-to-cart")) {
+    
     const id = e.target.parentElement.parentElement.id;
     const resultProduct = products.find((data) => data.id === `${id}`);
     let amount = 1;
 
     const cart = carts.find(({ id }) => id === resultProduct.id);
+
     if (cart) {
       cart.amount += 1;
       cart.amountPrice += cart.price;
@@ -146,6 +152,7 @@ cartContainer.addEventListener("click", (e) => {
     totalWeight.innerText = sumWeight;
 
     displayCart(carts, cartWrapper);
+
   }
   // Decrement amount cart
   if (e.target.classList.contains("increment")) {
@@ -167,7 +174,9 @@ cartContainer.addEventListener("click", (e) => {
     totalPrice.innerText = formatCurrencyToRupiah(sumPrice);
     totalWeight.innerText = sumWeight;
 
+
     displayCart(carts, cartWrapper);
+
   }
   // clear cart
   if (e.target.classList.contains("clear")) {
@@ -183,3 +192,4 @@ cartContainer.addEventListener("click", (e) => {
     displayCart(carts, cartWrapper);
   }
 });
+
