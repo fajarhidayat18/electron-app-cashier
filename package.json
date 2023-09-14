@@ -4,7 +4,7 @@
   "version": "beta",
   "description": "My Electron application description",
   "main": "src/main.js",
-  "env": "local",
+  "env": "prodction",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
