@@ -1,9 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const fs = require("fs");
 const path = require("path");
+const Store = require("electron-store");
 
 const product = require("../package.json");
 
+// Initialize the store
+const store = new Store();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -40,6 +43,47 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools();
   }
 
+  // Handle adding product request
+  ipcMain.on("save-product", (event, data) => {
+    // Get the current products from the store
+    const currentProducts = store.get("products", []);
+
+    // Add the new product
+    currentProducts.push(data);
+
+    // Save the updated products back to the store
+    store.set("products", currentProducts);
+
+    // Send a confirmation message to the renderer process
+    mainWindow.webContents.send("product-saved");
+  });
+  // Handle delete product request
+  ipcMain.on("delete-product", (event, id) => {
+    // Get the current products from the store
+    const currentProducts = store.get("products", []);
+
+    // Find the index of the product with the given id
+    const index = currentProducts.findIndex((product) => product.id === id);
+
+    if (index !== -1) {
+      // Remove the product from the array
+      currentProducts.splice(index, 1);
+
+      // Save the updated products back to the store
+      store.set("products", currentProducts);
+
+      // Send a confirmation message to the renderer process
+      event.sender.send("product-deleted");
+    }
+  });
+  // Handle request to get products
+  ipcMain.on("get-products", (event) => {
+    // Get the products from the store
+    const products = store.get("products", []);
+
+    // Send the products to the renderer process for display
+    mainWindow.webContents.send("display-products", products);
+  });
 
   ipcMain.on("print-data", (event, data) => {
     console.log("hello");

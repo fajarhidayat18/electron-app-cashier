@@ -1,4 +1,3 @@
-
 // call core module
 const { ipcRenderer, remote } = require("electron");
 const fs = require("fs");
@@ -23,7 +22,6 @@ const file = fs.readFileSync(FilePath, "utf-8");
 const products = JSON.parse(file);
 let carts = [];
 
-
 // =========================================================
 const cartContainer = document.getElementById("cartContainer");
 const listProducts = document.getElementById("listProducts");
@@ -33,8 +31,15 @@ const totalPrice = document.getElementById("totalPrice");
 const formItem = document.getElementById("formItem");
 // =========================================================
 
-displayProducts(products, listProducts);
+// Display products when the window loads
+window.addEventListener("load", () => {
+  ipcRenderer.send("get-products");
+});
 
+// Display products in listProducts
+ipcRenderer.on("display-products", (event, products) => {
+  displayProducts(products, listProducts);
+});
 // =========================================================
 
 document.getElementById("search").addEventListener("keyup", (e) => {
@@ -59,23 +64,28 @@ formItem.addEventListener("submit", (e) => {
   let name = nameProduct.value;
   let price = priceProduct.value;
   const id = `${Date.now()}`;
-  const data = handleAddProduct(id, name, parseInt(price));
+  handleAddProduct(id, name, parseInt(price));
+
+  // send adding data to main proses
+  // ipcRenderer.send("save-product", data);
 
   // adding data
-  products.push(data);
-  fs.writeFile(FilePath, JSON.stringify(products), (err) => {
-    if (err) throw err;
+  // products.push(data);
+  // fs.writeFile(FilePath, JSON.stringify(products), (err) => {
+  //   if (err) throw err;
+  // });
+
+  // Receive a confirmation message from the main process
+  ipcRenderer.on("product-saved", () => {
+    // clear form
+    nameProduct.value = "";
+    priceProduct.value = "";
+
+    // back focus to first input in this case nameproduct
+    nameProduct.focus();
+    // Refresh or update the product list
+    ipcRenderer.send("get-products");
   });
-
-  // clear form
-  nameProduct.value = "";
-  priceProduct.value = "";
-
-  // back focus to first input in this case nameproduct
-  nameProduct.focus();
-
-  // showing data
-  displayProducts(products, listProducts);
 });
 // =========================================================
 
@@ -83,7 +93,6 @@ formItem.addEventListener("submit", (e) => {
 listProducts.addEventListener("click", (e) => {
   // add data to cart
   if (e.target.classList.contains("add-to-cart")) {
-    
     const id = e.target.parentElement.parentElement.id;
     const resultProduct = products.find((data) => data.id === `${id}`);
     let amount = 1;
@@ -121,7 +130,12 @@ listProducts.addEventListener("click", (e) => {
   // Delete Data
   if (e.target.classList.contains("delete")) {
     handleDeleteProdcut(e.target.parentElement.parentElement.id);
-    displayProducts(products, listProducts);
+    // Handle a confirmation message from the main process
+    ipcRenderer.on("product-deleted", () => {
+      // Refresh or update the product list
+      ipcRenderer.send("get-products");
+    });
+    // displayProducts(products, listProducts);
   }
 });
 // =========================================================
@@ -152,7 +166,6 @@ cartContainer.addEventListener("click", (e) => {
     totalWeight.innerText = sumWeight;
 
     displayCart(carts, cartWrapper);
-
   }
   // Decrement amount cart
   if (e.target.classList.contains("increment")) {
@@ -174,9 +187,7 @@ cartContainer.addEventListener("click", (e) => {
     totalPrice.innerText = formatCurrencyToRupiah(sumPrice);
     totalWeight.innerText = sumWeight;
 
-
     displayCart(carts, cartWrapper);
-
   }
   // clear cart
   if (e.target.classList.contains("clear")) {
@@ -192,4 +203,3 @@ cartContainer.addEventListener("click", (e) => {
     displayCart(carts, cartWrapper);
   }
 });
-
