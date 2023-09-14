@@ -1,6 +1,4 @@
-const path = require("path");
-const product = require("./package.json");
-
+const path = require("path")
 module.exports = {
   packagerConfig: {
     asar: true,
@@ -8,38 +6,27 @@ module.exports = {
   rebuildConfig: {},
   makers: [
     {
-      name: "@electron-forge/maker-squirrel",
+      name: '@electron-forge/maker-squirrel',
       config: {
-        name: product.productName,
-        icon: path.resolve(__dirname, "src", "assets", "icons", "cashier.png"),
+        "icon": "./src/assets/icons/mac/icon.ico"
       },
     },
     {
-      name: "@electron-forge/maker-zip",
-      platforms: ["darwin"],
-      config: {
-        name: product.productName,
-        icon: path.resolve(__dirname, "src", "assets", "icons", "cashier.png"),
-      },
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin'],
     },
     {
-      name: "@electron-forge/maker-deb",
-      config: {
-        name: product.productName,
-        icon: path.resolve(__dirname, "src", "assets", "icons", "cashier.png"),
-      },
+      name: '@electron-forge/maker-deb',
+      config: {},
     },
     {
-      name: "@electron-forge/maker-rpm",
-      config: {
-        name: product.productName,
-        icon: path.resolve(__dirname, "src", "assets", "icons", "cashier.png"),
-      },
+      name: '@electron-forge/maker-rpm',
+      config: {},
     },
   ],
   plugins: [
     {
-      name: "@electron-forge/plugin-auto-unpack-natives",
+      name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
     },
   ],

@@ -35,6 +35,11 @@ window.addEventListener("load", () => {
   ipcRenderer.send("get-products");
 });
 
+ipcRenderer.on("product-saved", () => {
+  // Refresh or update the product list
+  ipcRenderer.send("get-products");
+});
+
 // Display products in listProducts
 ipcRenderer.on("display-products", (event, products) => {
   displayProducts(products, listProducts);
