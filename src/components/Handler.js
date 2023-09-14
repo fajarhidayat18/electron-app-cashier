@@ -1,22 +1,10 @@
 // function add Product
 function handleAddProduct(id, name, price) {
-  return ipcRenderer.send("save-product", { id, name, price });
-
-  let data = {};
-  data.id = id;
-  data.name = name;
-  data.price = price;
-  return data;
+  ipcRenderer.send("save-product", { id, name, price });
 }
 // function delete Product
 function handleDeleteProdcut(id) {
   return ipcRenderer.send("delete-product", id);
-
-  const result = products.findIndex((data) => data.id === `${id}`);
-  if (result !== -1) {
-    products.splice(result, 1);
-    fs.writeFileSync(FilePath, JSON.stringify(products));
-  }
 }
 
 // function add to Cart

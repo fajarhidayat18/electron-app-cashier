@@ -1,6 +1,6 @@
 // call core module
 const { ipcRenderer, remote } = require("electron");
-const fs = require("fs");
+const Store = require("electron-store");
 
 // call local module
 const { formatCurrencyToRupiah } = require("./components/Utility");
@@ -16,10 +16,10 @@ const {
 // const { PosPrinter } = remote.require("electron-pos-printer");
 // const { PosPrinter } = require("electron-pos-printer"); //dont work in production (??)
 
-const FilePath = "./src/data/products.json";
+// Initialize the store
+const store = new Store();
 
-const file = fs.readFileSync(FilePath, "utf-8");
-const products = JSON.parse(file);
+const products = store.get("products", []);
 let carts = [];
 
 // =========================================================
@@ -30,7 +30,6 @@ const totalWeight = document.getElementById("totalWeight");
 const totalPrice = document.getElementById("totalPrice");
 const formItem = document.getElementById("formItem");
 // =========================================================
-
 // Display products when the window loads
 window.addEventListener("load", () => {
   ipcRenderer.send("get-products");
@@ -41,13 +40,14 @@ ipcRenderer.on("display-products", (event, products) => {
   displayProducts(products, listProducts);
 });
 // =========================================================
-
 document.getElementById("search").addEventListener("keyup", (e) => {
-  const searchTerm = e.target.value.toLowerCase(); // Konversi input pencarian ke huruf kecil
+  // Konversi input pencarian ke huruf kecil
+  const searchTerm = e.target.value.toLowerCase();
+
   const filterProducts = products.filter((product) => {
-    return product.name.toLowerCase().includes(searchTerm); // Memeriksa apakah nama produk mengandung searchTerm
+    // Memeriksa apakah nama produk mengandung searchTerm
+    return product.name.toLowerCase().includes(searchTerm);
   });
-  console.log(filterProducts);
   displayProducts(filterProducts, listProducts);
 });
 // =========================================================
@@ -66,15 +66,6 @@ formItem.addEventListener("submit", (e) => {
   const id = `${Date.now()}`;
   handleAddProduct(id, name, parseInt(price));
 
-  // send adding data to main proses
-  // ipcRenderer.send("save-product", data);
-
-  // adding data
-  // products.push(data);
-  // fs.writeFile(FilePath, JSON.stringify(products), (err) => {
-  //   if (err) throw err;
-  // });
-
   // Receive a confirmation message from the main process
   ipcRenderer.on("product-saved", () => {
     // clear form
@@ -88,12 +79,12 @@ formItem.addEventListener("submit", (e) => {
   });
 });
 // =========================================================
-
 // click bussiness in list product
 listProducts.addEventListener("click", (e) => {
   // add data to cart
   if (e.target.classList.contains("add-to-cart")) {
     const id = e.target.parentElement.parentElement.id;
+
     const resultProduct = products.find((data) => data.id === `${id}`);
     let amount = 1;
 
@@ -135,7 +126,6 @@ listProducts.addEventListener("click", (e) => {
       // Refresh or update the product list
       ipcRenderer.send("get-products");
     });
-    // displayProducts(products, listProducts);
   }
 });
 // =========================================================

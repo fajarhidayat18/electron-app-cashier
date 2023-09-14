@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-const fs = require("fs");
 const path = require("path");
 const Store = require("electron-store");
 
@@ -29,14 +28,6 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "index.html"));
-
-  mainWindow.webContents.on("did-finish-load", () => {
-    const direktoryPath = "./src/data";
-    const FilePath = "./src/data/products.json";
-
-    if (!fs.existsSync(direktoryPath)) fs.mkdirSync(direktoryPath);
-    if (!fs.existsSync(FilePath)) fs.writeFileSync(FilePath, "[]", "utf-8");
-  });
 
   // Open the DevTools.
   if (product.env == "local") {
