@@ -1,9 +1,10 @@
 {
   "name": "kasir-buah",
   "productName": "Kasir Buah",
-  "version": "1.0.0",
+  "version": "beta",
   "description": "My Electron application description",
   "main": "src/main.js",
+  "env": "local",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
