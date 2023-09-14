@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "glory";
+  src: url("../fonts/Montserrat/static/Montserrat-Regular.ttf");
+}
+
 [data-feather="shopping-cart"] {
   content: url(./assets/icons/shopping-cart.svg);
   height: 24px;
@@ -20,10 +25,16 @@
 }
 
 * {
-  /* font-family: "Poppins", sans-serif; */
+  /* font-family: "Montserrat", sans-serif; */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 *::-webkit-scrollbar {
   display: none;
+}
+
+@media print and (width: 3.14in) {
+  @page {
+    margin: 5mm;
+  }
 }

@@ -608,58 +608,6 @@ video {
   display: grid;
 }
 
-.h-\[200px\] {
-  height: 200px;
-}
-
-.h-\[400px\] {
-  height: 400px;
-}
-
-.h-\[3000px\] {
-  height: 3000px;
-}
-
-.h-\[300px\] {
-  height: 300px;
-}
-
-.h-\[\] {
-  height: ;
-}
-
-.h-\[18\.75rem\] {
-  height: 18.75rem;
-}
-
-.h-\[19\.75rem\] {
-  height: 19.75rem;
-}
-
-.h-\[20rem\] {
-  height: 20rem;
-}
-
-.h-\[21rem\] {
-  height: 21rem;
-}
-
-.h-\[20\.15rem\] {
-  height: 20.15rem;
-}
-
-.h-\[20\.35rem\] {
-  height: 20.35rem;
-}
-
-.h-\[20\.55rem\] {
-  height: 20.55rem;
-}
-
-.h-\[20\.5rem\] {
-  height: 20.5rem;
-}
-
 .h-\[20\.6rem\] {
   height: 20.6rem;
 }
@@ -928,6 +876,12 @@ video {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
+@font-face {
+  font-family: "glory";
+
+  src: url("../fonts/Montserrat/static/Montserrat-Regular.ttf");
+}
+
 [data-feather="shopping-cart"] {
   content: url(./assets/icons/shopping-cart.svg);
   height: 24px;
@@ -949,13 +903,19 @@ video {
 }
 
 * {
-  /* font-family: "Poppins", sans-serif; */
+  /* font-family: "Montserrat", sans-serif; */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
 *::-webkit-scrollbar {
   display: none;
+}
+
+@media print and (width: 3.14in) {
+  @page {
+    margin: 5mm;
+  }
 }
 
 .hover\:bg-blue-500:hover {

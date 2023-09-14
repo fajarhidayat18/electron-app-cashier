@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const fs = require("fs");
 const path = require("path");
+const product = require("../package.json");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -12,6 +13,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 700,
+    icon: __dirname + "/assets/icons/cashier.png",
+    title: product.productName + " - " + product.version,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -22,14 +25,25 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 
+  mainWindow.webContents.on("did-finish-load", () => {
+    const direktoryPath = "./src/data";
+    const FilePath = "./src/data/products.json";
+
+    if (!fs.existsSync(direktoryPath)) fs.mkdirSync(direktoryPath);
+    if (!fs.existsSync(FilePath)) fs.writeFileSync(FilePath, "[]", "utf-8");
+  });
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (product.env == "local") {
+    mainWindow.webContents.openDevTools();
+  }
 
   ipcMain.on("print-data", (event, data) => {
     console.log("hello");
     childWindow = new BrowserWindow({
       width: 400,
       height: 500,
+      title: product.productName + " - struk",
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
