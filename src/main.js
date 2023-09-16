@@ -204,6 +204,82 @@ ipcMain.on("print-data", (event, data) => {
   });
 });
 
+loadPrintPage = (param1, param2, docId = false, title) => {
+  printPage = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  let d = new Date();
+  let day = d.getDate().toString().padStart(2, 0);
+  let month = (d.getMonth() + 1).toString().padStart(2, 0);
+  let year = d.getFullYear();
+  let today = `${day}/${month}/${year}`;
+
+  titleObject = {
+    title: title,
+    date: today,
+  };
+
+  db.query(`SELECT * FROM profile ORDER BY id ASC LIMIT 1`, (err, res) => {
+    if (err) throw err;
+    if (res.rows.length < 1) {
+      titleObject.storeName = "My Store";
+      titleObject.storeAddress = "Address";
+      titleObject.storeLogo = "shop.png";
+    } else {
+      titleObject.storeName = res.rows[0].store_name;
+      titleObject.storeAddress = res.rows[0].store_address;
+      if (res.rows[0].store_logo == null || res.rows[0].store_logo == "") {
+        titleObject.storeLogo = "shop.png";
+      } else {
+        titleObject.storeLogo = res.rows[0].logo;
+      }
+    }
+  });
+
+  switch (docId) {
+    case "sales-report":
+      printPage.loadFile(
+        path.join(__dirname, "export-pdf/sales-record-pdf.html")
+      );
+      break;
+    default:
+      printPage.loadFile(path.join(__dirname, "print-page.html"));
+      break;
+  }
+
+  printPage.webContents.on("dom-ready", () => {
+    printPage.webContents.send(
+      "load:table-to-print",
+      param1,
+      param2,
+      titleObject
+    );
+  });
+};
+
+ipcMain.on("load:print-page", (e, msgThead, msgTbody, msgDocId, msgTitle) => {
+  loadPrintPage(msgThead, msgTbody, msgDocId, msgTitle);
+});
+
+ipcMain.on("print:page", () => {
+  printPage.webContents.print(
+    {
+      printBackground: true,
+    },
+    (success, errorType) => {
+      if (!success) console.log("Print Error =>", errorType);
+      printPage.close();
+    }
+  );
+  printPage.on("close", () => {
+    printPage = null;
+  });
+});
+
 // ========================================================================
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
