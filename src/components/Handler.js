@@ -1,6 +1,7 @@
 // function add Product
 function handleAddProduct(id, name, price) {
-  ipcRenderer.send("save-product", { id, name, price });
+  console.log("handle");
+  return ipcRenderer.send("save-product", { id, name, price });
 }
 // function delete Product
 function handleDeleteProdcut(id) {

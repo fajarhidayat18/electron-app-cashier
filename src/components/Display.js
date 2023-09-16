@@ -1,3 +1,5 @@
+const { formatCurrencyToRupiah } = require("./Utility");
+
 // Show Data after add or delete list product
 function displayProducts(data, container) {
   container.innerHTML = ""; // empty container

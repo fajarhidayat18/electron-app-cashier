@@ -1,25 +1,19 @@
-// call core module
+// call third party module
 const { ipcRenderer, remote } = require("electron");
-const Store = require("electron-store");
+// const { PosPrinter } = remote.require("electron-pos-printer");
+// const { PosPrinter } = require("electron-pos-printer"); //dont work in production (??)
 
 // call local module
-const { formatCurrencyToRupiah } = require("./components/Utility");
-const { displayProducts, displayCart } = require("./components/Display");
+const { formatCurrencyToRupiah } = require("../components/Utility");
 const {
   handleAddCart,
   handleAddProduct,
   handleDeleteCart,
   handleDeleteProdcut,
-} = require("./components/Handler");
+} = require("../components/Handler");
 
-// call third party module
-// const { PosPrinter } = remote.require("electron-pos-printer");
-// const { PosPrinter } = require("electron-pos-printer"); //dont work in production (??)
-
-// Initialize the store
-const store = new Store();
-
-const products = store.get("products", []);
+// create variable data contain
+let products = [];
 let carts = [];
 
 // =========================================================
@@ -28,23 +22,19 @@ const listProducts = document.getElementById("listProducts");
 const cartWrapper = document.getElementById("wrapper-cart");
 const totalWeight = document.getElementById("totalWeight");
 const totalPrice = document.getElementById("totalPrice");
-const formItem = document.getElementById("formItem");
 // =========================================================
 // Display products when the window loads
 window.addEventListener("load", () => {
-  ipcRenderer.send("get-products");
-});
-
-ipcRenderer.on("product-saved", () => {
-  // Refresh or update the product list
-  ipcRenderer.send("get-products");
+  ipcRenderer.send("load:product-on-cashier-window");
 });
 
 // Display products in listProducts
-ipcRenderer.on("display-products", (event, products) => {
+ipcRenderer.on("display-products", (event, receivedProducts) => {
+  products = receivedProducts;
   displayProducts(products, listProducts);
 });
 // =========================================================
+// search
 document.getElementById("search").addEventListener("keyup", (e) => {
   // Konversi input pencarian ke huruf kecil
   const searchTerm = e.target.value.toLowerCase();
@@ -56,45 +46,18 @@ document.getElementById("search").addEventListener("keyup", (e) => {
   displayProducts(filterProducts, listProducts);
 });
 // =========================================================
-// Form Bussiness
-formItem.addEventListener("submit", (e) => {
-  // catch refresh window after submit form
-  e.preventDefault();
-
-  // get input element form data
-  const nameProduct = document.getElementById("nameItem");
-  const priceProduct = document.getElementById("priceItem");
-
-  // asign data
-  let name = nameProduct.value;
-  let price = priceProduct.value;
-  const id = `${Date.now()}`;
-  handleAddProduct(id, name, parseInt(price));
-
-  // Receive a confirmation message from the main process
-  ipcRenderer.on("product-saved", () => {
-    // clear form
-    nameProduct.value = "";
-    priceProduct.value = "";
-
-    // back focus to first input in this case nameproduct
-    nameProduct.focus();
-    // Refresh or update the product list
-    ipcRenderer.send("get-products");
-  });
-});
-// =========================================================
-// click bussiness in list product
+// add data to cart
 listProducts.addEventListener("click", (e) => {
-  // add data to cart
   if (e.target.classList.contains("add-to-cart")) {
+    // initialize the data that is clicked
     const id = e.target.parentElement.parentElement.id;
-
     const resultProduct = products.find((data) => data.id === `${id}`);
     let amount = 1;
 
+    /* 
+    conditioning if the data you click on is already in the cart then increase the amount, otherwise enter the data
+    */
     const cart = carts.find(({ id }) => id === resultProduct.id);
-
     if (cart) {
       cart.amount += 1;
       cart.amountPrice += cart.price;
@@ -122,15 +85,6 @@ listProducts.addEventListener("click", (e) => {
     totalWeight.innerText = sumWeight;
 
     displayCart(carts, cartWrapper);
-  }
-  // Delete Data
-  if (e.target.classList.contains("delete")) {
-    handleDeleteProdcut(e.target.parentElement.parentElement.id);
-    // Handle a confirmation message from the main process
-    ipcRenderer.on("product-deleted", () => {
-      // Refresh or update the product list
-      ipcRenderer.send("get-products");
-    });
   }
 });
 // =========================================================
@@ -198,3 +152,57 @@ cartContainer.addEventListener("click", (e) => {
     displayCart(carts, cartWrapper);
   }
 });
+// =========================================================
+function displayProducts(data, container) {
+  container.innerHTML = ""; // empty container
+  data.forEach((data) => {
+    container.innerHTML += `
+      <div class="grid grid-cols-3 items-center place-items-start border-b border-neutral-300 py-3" id="${
+        data.id
+      }">
+        <div class="text-base" id="nameProduct">${data.name}</div>
+        <div class="text-base" id="priceProduct">${formatCurrencyToRupiah(
+          data.price
+        )}</div>
+        <div class="text-base flex gap-2">
+            <button
+              class="add-to-cart p-1 rounded bg-blue-500 text-white flex"
+              id="addToCart"
+              data-feather="shopping-cart" />
+          </div>
+      </div>
+      `;
+  });
+}
+function displayCart(data, container) {
+  container.innerHTML = ""; // empty container
+  data.forEach((data) => {
+    container.innerHTML += `
+    <div class="py-2 px-3 flex justify-between items-center border-b" id="${
+      data.id
+    }">
+      <div class="flex flex-col gap-1">
+        <span class="font-bold text-base">${data.name}</span>
+        <span class="font-medium text-base">${formatCurrencyToRupiah(
+          data.price
+        )}</span>
+        </div>
+  
+        <div class="flex gap-2">
+          <button
+            class="decrement rounded-lg border border-green-500 p-1 flex"
+            data-feather="minus-circle">
+            <!-- <i data-feather="minus-circle"></i> -->
+          </button>
+          <span class="amount font-medium text-lg">${data.amount}</span>
+          <button
+            class="increment rounded-lg border border-green-500 p-1 flex"
+            data-feather="plus-circle">
+            <!-- <i data-feather="plus-circle"></i> -->
+          </button>
+        </div>
+  
+      </div>
+    `;
+  });
+}
