@@ -4,6 +4,7 @@ const {
   handleAddProduct,
   handleDeleteProdcut,
 } = require("../components/Handler.js");
+const feather = require("feather-icons");
 
 // =============================================================================
 const listProducts = document.getElementById("listProducts");
@@ -26,21 +27,38 @@ formItem.addEventListener("submit", (e) => {
 
   // get input element form data
   let nameItem = document.getElementById("nameItem");
-  let priceItem = document.getElementById("priceItem");
+  let sellingPriceItem = document.getElementById("sellingPriceItem");
+  let costPriceItem = document.getElementById("costPriceItem");
+  let stockItem = document.getElementById("stockItem");
+  // let unitOfPrice = document.getElementById("unitOfPrice");
 
   // asign data
-  const id = `${Date.now()}`;
+  const id = Date.now();
+  const soldStock = 0;
   let name = nameItem.value;
-  let price = priceItem.value;
+  let sellingPrice = sellingPriceItem.value;
+  let costPrice = costPriceItem.value;
+  let stock = stockItem.value;
+  let unit = "Kg";
 
   // save data
-  handleAddProduct(id, name, parseInt(price));
+  handleAddProduct(
+    parseInt(id),
+    name,
+    parseInt(sellingPrice),
+    parseInt(costPrice),
+    parseInt(stock),
+    soldStock,
+    unit
+  );
 
   // Receive a confirmation message from the main process
   ipcRenderer.on("product-saved", () => {
     // clear form
     nameItem.value = "";
-    priceItem.value = "";
+    sellingPriceItem.value = "";
+    costPriceItem.value = "";
+    stockItem.value = "";
 
     // back focus to first input in this case nameproduct
     nameItem.focus();
@@ -54,7 +72,8 @@ formItem.addEventListener("submit", (e) => {
 listProducts.addEventListener("click", (e) => {
   if (e.target.classList.contains("delete")) {
     // Delete data product
-    handleDeleteProdcut(e.target.parentElement.parentElement.id);
+    const id = parseInt(e.target.parentElement.parentElement.id);
+    handleDeleteProdcut(id);
 
     // Handle a confirmation message from the main process
     ipcRenderer.on("product-deleted", () => {
@@ -69,13 +88,19 @@ function displayProducts(data, container) {
   container.innerHTML = ""; // empty container
   data.forEach((data) => {
     container.innerHTML += `
-        <div class="grid grid-cols-3 items-center place-items-start border-b border-neutral-300 py-3" id="${
+        <div class="grid grid-cols-5 items-center place-items-start border-b border-neutral-300 py-3" id="${
           data.id
         }">
           <div class="text-base" id="nameProduct">${data.name}</div>
           <div class="text-base" id="priceProduct">${formatCurrencyToRupiah(
-            data.price
-          )}</div>
+            data.sellingPrice
+          )}/${data.unit}</div>
+          <div class="text-base" id="priceProduct">${formatCurrencyToRupiah(
+            data.costPrice
+          )}/${data.unit}</div>
+          <div class="text-base" id="priceProduct">${data.stock} ${
+      data.unit
+    }</div>
           <div class="text-base flex gap-2">
               <button
                 class="delete p-1 rounded bg-red-500 text-white flex"
@@ -84,5 +109,6 @@ function displayProducts(data, container) {
             </div>
         </div>
         `;
+    feather.replace();
   });
 }

@@ -1,32 +1,34 @@
 // call core module
 const path = require("path");
-
+// ===========================================================================
 // call thrid party module
 const { app, BrowserWindow, ipcMain } = require("electron");
 const Store = require("electron-store");
-
+// ===========================================================================
 // call local module
 const product = require("../package.json");
-
+// ===========================================================================
 // Initialize the store
 const store = new Store();
-
+// ===========================================================================
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
+// ===========================================================================
 // variable declaration
 let mainWindow;
 let productWindow;
 let cashierWindow;
 const title = product.productName;
 const version = product.version;
+// ===========================================================================
 
 createWindow = () => {
   // Create the main window.
   mainWindow = new BrowserWindow({
-    width: 400,
-    height: 300,
+    width: 800,
+    height: 700,
     icon: __dirname + "/assets/icons/cashier.png",
     title: `${title} - ${version}`,
     webPreferences: {
@@ -43,8 +45,45 @@ createWindow = () => {
   if (product.env == "local") {
     mainWindow.webContents.openDevTools();
   }
+  // ===========================================================================
+  // Handle request to get products
+  ipcMain.on("load:transaction-window", (event) => {
+    // Get the data from the store
+    const products = store.get("products");
+    const carts = store.get("cartsShopping");
+    const currentCashBook = store.get("cashBook");
+    // console.log(currentCashBook);
+    // Send the products to the renderer process for display
+    mainWindow.webContents.send("display:data-transaction", currentCashBook);
+  });
+  // ===========================================================================
+  ipcMain.on("clear-transaction", () => {
+    store.set("cashBook", []);
+  });
+
+  // Handle request to delete a product
+  ipcMain.on("delete:delete-transaction", (event, id) => {
+    // Get the current products from the store
+    const currentLedger = store.get("cashBook");
+
+    // Find the index of the product with the given id
+    const index = currentLedger.findIndex((product) => product.id === id);
+    if (index !== -1) {
+      // Remove the product from the array
+      currentLedger.splice(index, 1);
+
+      // Save the updated products back to the store
+      store.set("cashBook", currentLedger);
+
+      // Send a confirmation message to the renderer process
+      event.sender.send("delete:transaction-deleted");
+    }
+  });
+  // ===========================================================================
 };
-// ========================================================================
+// ===========================================================================
+// ===========================================================================
+// ===========================================================================
 
 // show Window Product stock
 ipcMain.on("product-page", () => {
@@ -54,7 +93,7 @@ ipcMain.on("product-page", () => {
 const createProductWindow = () => {
   // create the Product window
   productWindow = new BrowserWindow({
-    width: 800,
+    width: 900,
     height: 700,
     title: `${title} | Product`,
     webPreferences: {
@@ -62,7 +101,7 @@ const createProductWindow = () => {
       contextIsolation: false,
     },
   });
-
+  // ===========================================================================
   // and load the product.html and hide main window
   productWindow.loadFile(path.join(__dirname, "window/product.html"));
   productWindow.webContents.on("did-finish-load", () => {
@@ -72,7 +111,7 @@ const createProductWindow = () => {
   productWindow.on("closed", () => {
     mainWindow.show();
   });
-
+  // ===========================================================================
   // Handle request to get products
   ipcMain.on("load:product-on-product-window", (event) => {
     // Get the products from the store
@@ -81,6 +120,7 @@ const createProductWindow = () => {
     // Send the products to the renderer process for display
     productWindow.webContents.send("display-products", products);
   });
+  // ===========================================================================
 
   // Handle request to save products
   ipcMain.on("save-product", (event, data) => {
@@ -89,7 +129,7 @@ const createProductWindow = () => {
 
     // Add the new product
     currentProducts.push(data);
-
+    // console.log(currentProducts);
     // Save the updated products back to the store
     store.set("products", currentProducts);
 
@@ -115,9 +155,11 @@ const createProductWindow = () => {
       event.sender.send("product-deleted");
     }
   });
+  // ===========================================================================
 };
-
-// ========================================================================
+// ===========================================================================
+// ===========================================================================
+// ===========================================================================
 
 // show and load Window cashier
 ipcMain.on("cashier-page", () => {
@@ -135,29 +177,70 @@ const createCashierWindow = () => {
       contextIsolation: false,
     },
   });
-
+  // ===========================================================================
   // and load the cashier.html and hide main window
   cashierWindow.loadFile(path.join(__dirname, "window/cashier.html"));
   cashierWindow.webContents.on("did-finish-load", () => {
     mainWindow.hide();
   });
-
   // if product window close,then display the main window again
   cashierWindow.on("closed", () => {
     mainWindow.show();
   });
-
+  // ===========================================================================
   // Handle request to get products
-  ipcMain.on("load:product-on-cashier-window", (event) => {
-    // Get the products from the store
+  ipcMain.on("load:data-window", (event) => {
+    // Get the data from the store
     const products = store.get("products");
+    const carts = store.get("cartsShopping");
 
     // Send the products to the renderer process for display
-    cashierWindow.webContents.send("display-products", products);
+    cashierWindow.webContents.send("show:display-data", products, carts);
   });
-};
+  // ===========================================================================
+  ipcMain.on("create:data-cart", (e, data) => {
+    const currentCart = store.get("cartsShopping", []);
 
-// ========================================================================
+    // Add the new product
+    currentCart.push(data);
+
+    // Save the updated products back to the store
+    store.set("cartsShopping", currentCart);
+
+    // Send a confirmation message to the renderer process
+    cashierWindow.webContents.send("CartsUpdate");
+  });
+
+  ipcMain.on("delete:cart-item", (event, id) => {
+    // Get the current products from the store
+    const currentCarts = store.get("cartsShopping");
+
+    // Find the index of the product with the given id and Remove the product from the array
+    const updatedCarts = currentCarts.filter((cart) => cart.id !== id);
+
+    // Save the updated products back to the store
+    store.set("cartsShopping", updatedCarts);
+
+    // Send a confirmation message to the renderer process
+    event.sender.send("update:cart-deleted");
+  });
+
+  ipcMain.on("create:cashbook", (e, data) => {
+    const currentCashBook = store.get("cashBook", []);
+
+    currentCashBook.push(data);
+
+    store.set("cashBook", currentCashBook);
+    store.set("cartsShopping", []);
+    // console.log(currentCashBook);
+
+    cashierWindow.webContents.send("load:create-cash-book", currentCashBook);
+  });
+  // ===========================================================================
+};
+// ===========================================================================
+// ===========================================================================
+// ===========================================================================
 // Handle Print page
 ipcMain.on("print-data", (event, data) => {
   childWindow = new BrowserWindow({
@@ -279,13 +362,18 @@ ipcMain.on("print:page", () => {
     printPage = null;
   });
 });
-
-// ========================================================================
+// ===========================================================================
+// ===========================================================================
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+// ===========================================================================
+// ===========================================================================
+// ===========================================================================
+
 app.whenReady().then(() => {
   createWindow();
+  // Set icon for the entire application
 
   app.on("activate", () => {
     // On OS X it's common to re-create a window in the app when the
@@ -304,3 +392,6 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+// ===========================================================================
+// ===========================================================================
+// ===========================================================================

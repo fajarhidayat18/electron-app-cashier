@@ -4,67 +4,97 @@
     <link href="../index.css" rel="stylesheet" />
     <style>
       .feather {
-        width: 14px;
-        height: 14px;
+        width: 24px;
+        height: 24px;
       }
     </style>
   </head>
   <body>
     <main
-      class="grid place-content-center h-full w-full grid-rows-[125px_480px] gap-4 fixed p-4 bg-slate-100">
+      class="grid place-content-center h-full w-full grid-rows-[0.1fr_480px] gap-4 fixed p-4 bg-slate-100">
       <!-- form -->
       <form
         action=""
-        class="grid grid-cols-1 sm:grid-cols-3 item-center justify-between gap-4 col-span-2 bg-white p-4 rounded-md shadow-md border border-neutral-300"
+        class="grid grid-cols-3 place-items-end place-content-end justify-between gap-2 bg-white p-4 rounded-md shadow-md border border-neutral-300"
         id="formItem">
-        <div class="flex flex-col justify-between">
-          <label for="name" class="text-sm font-medium text-neutral-500"
-            >Nama Buah</label
-          >
+        <label class="">
+          <span class="text-sm text-neutral-500 font-medium">Nama Buah</span>
           <input
             type="text"
             name="name"
             id="nameItem"
-            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md font-base"
             required />
-        </div>
+        </label>
 
-        <div class="flex flex-col justify-between">
-          <label for="weight" class="text-sm font-medium text-neutral-500"
-            >Harga</label
-          >
+        <label class="">
+          <span class="text-sm text-neutral-500 font-medium">Harga Jual</span>
           <input
             type="number"
-            name="weight"
-            id="priceItem"
-            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md"
+            name="sellingPrice"
+            id="sellingPriceItem"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md font-base"
             required />
-        </div>
+        </label>
+
+        <label class="">
+          <span class="text-sm text-neutral-500 font-medium">Harga Pokok</span>
+          <input
+            type="number"
+            name="costPrice"
+            id="costPriceItem"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md font-base"
+            required />
+        </label>
+
+        <label class="">
+          <span class="text-sm text-neutral-500 font-medium">Stok Awal</span>
+          <input
+            type="number"
+            name="stock"
+            id="stockItem"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md font-base"
+            required />
+        </label>
+        <!--         
+        <div class="flex flex-col self-end w-full">
+          <span class="text-sm text-neutral-500 font-medium">Unit Jual</span>
+          <select
+            name="unit"
+            id="unitOfPrice"
+            class="flex p-2 border border-neutral-400 focus:border-blue-400 bg-white focus:outline-none rounded-md appearance-none">
+            <option value="Buah" class="">Satuan</option>
+            <option value="Kg" class="">Kilogram</option>
+            <option value="Sisir" class="">Sisir</option>
+          </select>
+        </div> -->
 
         <button
           type="submit"
-          class="flex self-end items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md focus:outline-blue-300">
+          class="flex w-full items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md focus:outline-blue-300">
           Tambah Buah
         </button>
       </form>
       <!-- list data -->
       <div
-        class="border-2 border-neutral-200 rounded-md p-4 row-start-2 col-span-2 gap-4 bg-white">
+        class="border-2 border-neutral-200 rounded-md p-4 row-start-2 gap-4 bg-white">
         <div class="flex flex-col gap-1 mb-4">
           <input
             type="text"
             name="search"
             id="search"
             class="p-2 border border-neutral-400 focus:border-blue-400 focus:outline-none rounded-md"
-            placeholder="Bari Buah" />
+            placeholder="Cari Buah" />
         </div>
 
         <div class="flex flex-col w-full" id="tableItems">
           <div class="flex justify-between">
             <div
-              class="grid grid-cols-3 items-start w-full border-b border-neutral-300 py-4">
+              class="grid grid-cols-5 items-start w-full border-b border-neutral-300 py-4">
               <div class="text-left font-semibold text-lg">Nama Buah</div>
-              <div class="text-left font-semibold text-lg">Harga Buah</div>
+              <div class="text-left font-semibold text-lg">Harga Jual</div>
+              <div class="text-left font-semibold text-lg">Harga Pokok</div>
+              <div class="text-left font-semibold text-lg">Stok Awal</div>
               <div class="text-left font-semibold text-lg">aksi</div>
             </div>
           </div>

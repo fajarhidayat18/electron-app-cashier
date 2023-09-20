@@ -10,9 +10,9 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       config: {
         // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
-        icon: "src/assets/icons/cashier.ico",
+        icon: __dirname + "/src/assets/icons/cashier.png",
         // The ICO file to use as the icon for the generated Setup.exe
-        setupIcon: "src/assets/icons/cashier.ico",
+        setupIcon: __dirname + "/src/assets/icons/cashier.png",
       },
     },
     {

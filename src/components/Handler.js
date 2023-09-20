@@ -1,7 +1,22 @@
 // function add Product
-function handleAddProduct(id, name, price) {
-  console.log("handle");
-  return ipcRenderer.send("save-product", { id, name, price });
+function handleAddProduct(
+  id,
+  name,
+  sellingPrice,
+  costPrice,
+  stock,
+  soldStock,
+  unit
+) {
+  return ipcRenderer.send("save-product", {
+    id,
+    name,
+    sellingPrice,
+    costPrice,
+    stock,
+    soldStock,
+    unit,
+  });
 }
 // function delete Product
 function handleDeleteProdcut(id) {
@@ -9,25 +24,17 @@ function handleDeleteProdcut(id) {
 }
 
 // function add to Cart
-function handleAddCart(id, name, price, amount) {
-  let data = {};
-  data.id = id;
-  data.name = name;
-  data.price = price;
-  data.amount = amount;
-  data.amountPrice = price;
-  return data;
+function handleCreateCart(data) {
+  return ipcRenderer.send("create:data-cart", data);
 }
+
 // function product in cart
 function handleDeleteCart(id) {
-  const result = carts.findIndex((data) => data.id === `${id}`);
-  if (result !== -1) {
-    carts.splice(result, 1);
-  }
+  return ipcRenderer.send("delete:cart-item", id);
 }
 
 module.exports = {
-  handleAddCart,
+  handleCreateCart,
   handleAddProduct,
   handleDeleteCart,
   handleDeleteProdcut,

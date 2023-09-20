@@ -4,39 +4,96 @@
     <link href="./index.css" rel="stylesheet" />
     <style>
       .feather {
-        width: 14px;
-        height: 14px;
+        width: 24px;
+        height: 24px;
       }
     </style>
   </head>
   <body>
-    <main
-      class="grid place-content-center h-screen w-screen gap-4 fixed p-4 bg-slate-100">
-      <div class="flex gap-4">
+    <nav class="flex w-full justify-center shadow-md z-10">
+      <div class="flex gap-6">
         <button
-          class="flex flex-col items-center p-4 rounded-md border border-neutral-300 gap-2 hover:outline hover:outline-blue-500"
+          class="flex flex-col items-center p-4 gap-2 border-b-2 border-transparent group hover:border-blue-400"
           onclick="productPage()">
-          <img src="assets/icons/stock.png" alt="" srcset="" />
+          <!-- <img src="assets/icons/stock.png" alt="" srcset="" /> -->
+          <i
+            data-feather="archive"
+            class="text-neutral-500 group-hover:text-blue-400"></i>
           <span>Produk</span>
         </button>
         <button
-          class="flex flex-col items-center p-4 rounded-md border border-neutral-300 gap-2 hover:outline hover:outline-blue-500"
+          class="flex flex-col items-center p-4 gap-2 border-b-2 border-transparent group hover:border-blue-400"
           onclick="cashierPage()">
-          <img src="assets/icons/cash-machine.png" alt="" srcset="" />
+          <!-- <img src="assets/icons/cash-machine.png" alt="" srcset="" /> -->
+          <i
+            data-feather="monitor"
+            class="text-neutral-500 group-hover:text-blue-400"></i>
           <span>Kasir</span>
         </button>
       </div>
+    </nav>
+    <main
+      class="flex flex-col h-screen w-screen gap-4 relative p-4 bg-slate-100">
+      <section id="overview" class="flex justify-center gap-4 w-full my-2">
+        <div
+          class="flex flex-col items-center gap-2 p-4 rounded-lg hover:shadow-md transition-all ease-in">
+          <div class="p-2 rounded-xl bg-blue-200 text-blue-500">
+            <i data-feather="shopping-bag"></i>
+          </div>
+          <span class="text-xl font-bold" id="totalSalesWeight">0</span>
+          <p>total berat penjualan</p>
+        </div>
+        <div
+          class="flex flex-col items-center gap-2 p-4 rounded-lg hover:shadow-md transition-all ease-in">
+          <div class="p-2 rounded-xl bg-blue-200 text-blue-500">
+            <i data-feather="dollar-sign"></i>
+          </div>
+          <span class="text-xl font-bold" id="totalIncome">Rp.000.000</span>
+          <p>total pendapatan</p>
+        </div>
+      </section>
+      <section
+        class="w-full rounded-md bg-white border border-neutral-300"
+        id="wrapperTransaction">
+        <h3 class="text-center text-xl font-semibold my-2">
+          catatan transaksi
+        </h3>
+
+        <div class="flex flex-col w-full p-4" id="tableTransaction">
+          <div class="flex justify-between p-2 bg-slate-200 rounded-md">
+            <div class="grid grid-cols-5 items-start w-full">
+              <div class="text-center font-semibold text-md">Nama Buah</div>
+              <div class="text-center font-semibold text-md">
+                total keuntungan
+              </div>
+              <div class="text-center font-semibold text-md">
+                pendapatan bersih
+              </div>
+              <div class="text-center font-semibold text-md">stok terjual</div>
+              <div class="text-center font-semibold text-md">aksi</div>
+            </div>
+          </div>
+          <div
+            class="flex flex-col grow-0 overflow-y-auto h-[20.6rem]"
+            id="listTransaction">
+            <!--             
+            <div
+              class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
+              <div class="text-base" id="nameProduct">Buah Naga</div>
+              <div class="text-base" id="priceProduct">30.000</div>
+              <div class="text-base" id="priceProduct">30.000</div>
+              <div class="text-base flex gap-2">
+                <button
+                  class="add-to-cart p-1 rounded bg-blue-500 text-white flex"
+                  id="deleteIncome"
+                  data-feather="shopping-cart" />
+              </div>
+            </div>
+             -->
+          </div>
+        </div>
+      </section>
     </main>
-
-    <script>
-      const { ipcRenderer } = require("electron");
-
-      function productPage() {
-        ipcRenderer.send("product-page");
-      }
-      const cashierPage = () => {
-        ipcRenderer.send("cashier-page");
-      };
-    </script>
+    <script src="index.js"></script>
   </body>
 </html>
