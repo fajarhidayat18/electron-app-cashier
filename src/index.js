@@ -7,6 +7,7 @@ const { handleDeleteTransaction } = require("./components/Handler");
 const listTransaction = document.getElementById("listTransaction");
 const listProduct = document.getElementById("listProduct");
 const tableTransaction = document.getElementById("tableTransaction");
+const tableProduct = document.getElementById("tableProduct");
 const totalIncome = document.getElementById("totalIncome");
 const totalSalesWeight = document.getElementById("totalSalesWeight");
 // =============================================================================
@@ -27,7 +28,6 @@ ipcRenderer.on("display:data-transaction", (e, receivedCashBook, products) => {
 
   transactions.forEach((transaction) => {
     transaction.carts.forEach((cart) => {
-      console.log(cart);
       totalPurchaseAmount += cart.purchaseAmountProduct;
       totalPurchasePrice += cart.totalPurchasePriceProduct;
     });
@@ -35,11 +35,12 @@ ipcRenderer.on("display:data-transaction", (e, receivedCashBook, products) => {
 
   if (transactions.length) {
     totalIncome.innerHTML = formatCurrencyToRupiah(totalPurchasePrice);
-    totalSalesWeight.innerHTML = totalPurchaseAmount + " Kg";
-    displayTransaction(transactions, listTransaction);
+    totalSalesWeight.innerHTML = totalPurchaseAmount + " Ons";
     displayProducts(products, listProduct);
+    displayTransaction(transactions, listTransaction);
   } else {
     tableTransaction.innerHTML = `<h5 class="text-center">belum ada penjualan</h5>`;
+    tableProduct.innerHTML = `<h5 class="text-center">belum ada buah yang tejual</h5>`;
     totalProfit.innerHTML = formatCurrencyToRupiah(0);
     totalSalesWeight.innerHTML = 0;
   }
@@ -66,22 +67,36 @@ const cashierPage = () => {
 };
 // =============================================================================
 function displayProducts(datas, container) {
-  container.innerHTML = "";
-  datas.forEach((data) => {
+  container.innerHTML = ``;
+
+  // Lakukan map dan simpan hasilnya dalam variabel
+  const mappedData = datas.map((data) => {
     const income = (data.sellingPrice - data.costPrice) * data.soldStock;
-    container.innerHTML += `
-    <div class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
-      <div class="text-base" id="nameProduct">${data.name}</div>
-      <div class="text-base" id="priceProduct">${
-        data.sellingPrice * data.soldStock
-      }</div>
-      <div class="text-base" id="priceProduct">${income}</div>
-      <div class="text-base" id="priceProduct">${
-        data.stock - data.soldStock
-      }</div>
-    </div>
-        `;
-    console.log(data);
+    return {
+      name: data.name,
+      priceProduct: data.sellingPrice * data.soldStock,
+      income,
+      remainingStock: data.stock - data.soldStock,
+      soldStock: data.soldStock, // Tambahan properti soldStock
+    };
+  });
+
+  // Urutkan berdasarkan soldStock
+  mappedData.sort((a, b) => a.soldStock - b.soldStock).reverse();
+
+  // Loop melalui hasil map yang sudah diurutkan
+  mappedData.forEach((data) => {
+    // Cek apakah properti soldStock ada
+    if (data.soldStock !== undefined) {
+      container.innerHTML += `
+      <div class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
+        <div class="text-base" id="nameProduct">${data.name}</div>
+        <div class="text-base" id="priceProduct">${data.priceProduct}</div>
+        <div class="text-base" id="priceProduct">${data.income}</div>
+        <div class="text-base" id="priceProduct">${data.remainingStock}</div>
+      </div>
+    `;
+    }
   });
 }
 function displayTransaction(datas, container) {
@@ -133,7 +148,7 @@ function displayTransaction(datas, container) {
       <div class="text-base" id="netIncome">${formatCurrencyToRupiah(
         totalNetIncome
       )}</div>
-      <div class="text-base" id="stockSold">${totalStockSold} Kg</div>
+      <div class="text-base" id="stockSold">${totalStockSold} Ons</div>
       <div class="text-base flex gap-2">
         <button
           class="delete p-1 rounded bg-red-500 text-white flex"
