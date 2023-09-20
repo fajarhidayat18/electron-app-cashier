@@ -1,7 +1,7 @@
 {
   "name": "kasir-buah",
   "productName": "Kasir Buah",
-  "version": "1.3.1",
+  "version": "0.8.4",
   "description": "My Electron application description",
   "main": "src/main.js",
   "env": "production",
@@ -22,7 +22,8 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
-    "feather-icons": "^4.29.1"
+    "feather-icons": "^4.29.1",
+    "node-escpos": "^0.0.3"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
