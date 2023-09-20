@@ -51,10 +51,14 @@ createWindow = () => {
     // Get the data from the store
     const products = store.get("products");
     const carts = store.get("cartsShopping");
-    const currentCashBook = store.get("cashBook");
+    const currentCashBook = store.get("transactions");
     // console.log(currentCashBook);
     // Send the products to the renderer process for display
-    mainWindow.webContents.send("display:data-transaction", currentCashBook);
+    mainWindow.webContents.send(
+      "display:data-transaction",
+      currentCashBook,
+      products
+    );
   });
   // ===========================================================================
   ipcMain.on("clear-transaction", () => {
@@ -64,20 +68,18 @@ createWindow = () => {
   // Handle request to delete a product
   ipcMain.on("delete:delete-transaction", (event, id) => {
     // Get the current products from the store
-    const currentLedger = store.get("cashBook");
+    const currentTransactions = store.get("transactions");
 
-    // Find the index of the product with the given id
-    const index = currentLedger.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      // Remove the product from the array
-      currentLedger.splice(index, 1);
+    // Menggunakan metode filter() untuk menghapus elemen dengan id yang cocok
+    const updatedTransactions = currentTransactions.filter(
+      (transaction) => transaction.id !== id
+    );
 
-      // Save the updated products back to the store
-      store.set("cashBook", currentLedger);
+    // Simpan array yang diperbarui kembali ke store
+    store.set("transactions", updatedTransactions);
 
-      // Send a confirmation message to the renderer process
-      event.sender.send("delete:transaction-deleted");
-    }
+    // Kirim pesan konfirmasi ke proses renderer
+    event.sender.send("delete:transaction-deleted");
   });
   // ===========================================================================
 };
@@ -124,13 +126,16 @@ const createProductWindow = () => {
   // ===========================================================================
 
   // Handle request to save products
-  ipcMain.on("save-product", (event, data) => {
+  ipcMain.on("create:create-product", (event, data) => {
     // Get the current products from the store
-    const currentProducts = store.get("products", []);
+    currentProducts = store.get("products", []);
 
-    // Add the new product
-    currentProducts.push(data);
-    // console.log(currentProducts);
+    const produkSudahAda = currentProducts.some(function (item) {
+      return item.id === data.id;
+    });
+
+    if (!produkSudahAda) currentProducts.push(data);
+
     // Save the updated products back to the store
     store.set("products", currentProducts);
 
@@ -201,13 +206,17 @@ const createCashierWindow = () => {
   });
   // ===========================================================================
   ipcMain.on("create:data-cart", (e, data) => {
-    const currentCart = store.get("cartsShopping", []);
+    const currentCarts = store.get("cartsShopping", []);
 
+    const produkSudahAda = currentCarts.some(function (item) {
+      return item.id === data.id;
+    });
+
+    if (!produkSudahAda) currentCarts.push(data);
     // Add the new product
-    currentCart.push(data);
 
     // Save the updated products back to the store
-    store.set("cartsShopping", currentCart);
+    store.set("cartsShopping", currentCarts);
 
     // Send a confirmation message to the renderer process
     cashierWindow.webContents.send("CartsUpdate");
@@ -227,16 +236,23 @@ const createCashierWindow = () => {
     event.sender.send("update:cart-deleted");
   });
 
-  ipcMain.on("create:cashbook", (e, data) => {
-    const currentCashBook = store.get("cashBook", []);
+  ipcMain.on("create:transactions-data", (e, data) => {
+    const currentTransactions = store.get("transactions", []);
 
-    currentCashBook.push(data);
+    const produkSudahAda = currentTransactions.some(function (item) {
+      return item.id === data.id;
+    });
 
-    store.set("cashBook", currentCashBook);
+    if (!produkSudahAda) currentTransactions.push(data);
+
+    store.set("transactions", currentTransactions);
     store.set("cartsShopping", []);
     // console.log(currentCashBook);
 
-    cashierWindow.webContents.send("load:create-cash-book", currentCashBook);
+    cashierWindow.webContents.send(
+      "load:create-cash-book",
+      currentTransactions
+    );
   });
   // ===========================================================================
 };

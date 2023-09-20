@@ -1,26 +1,13 @@
 // function add Product
-function handleAddProduct(
-  id,
-  name,
-  sellingPrice,
-  costPrice,
-  stock,
-  soldStock,
-  unit
-) {
-  return ipcRenderer.send("save-product", {
-    id,
-    name,
-    sellingPrice,
-    costPrice,
-    stock,
-    soldStock,
-    unit,
-  });
+function handleAddProduct(data) {
+  return ipcRenderer.send("create:create-product", data);
 }
 // function delete Product
 function handleDeleteProdcut(id) {
   return ipcRenderer.send("delete-product", id);
+}
+function handleDeleteTransaction(id) {
+  return ipcRenderer.send("delete:delete-transaction", id);
 }
 
 // function add to Cart
@@ -38,4 +25,5 @@ module.exports = {
   handleAddProduct,
   handleDeleteCart,
   handleDeleteProdcut,
+  handleDeleteTransaction,
 };

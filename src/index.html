@@ -52,47 +52,88 @@
           <p>total pendapatan</p>
         </div>
       </section>
-      <section
-        class="w-full rounded-md bg-white border border-neutral-300"
-        id="wrapperTransaction">
-        <h3 class="text-center text-xl font-semibold my-2">
-          catatan transaksi
-        </h3>
+      <div class="flex">
+        <section
+          class="w-full rounded-md bg-white border border-neutral-300"
+          id="wrapperTransaction">
+          <h3 class="text-center text-xl font-semibold my-2">
+            catatan transaksi
+          </h3>
 
-        <div class="flex flex-col w-full p-4" id="tableTransaction">
-          <div class="flex justify-between p-2 bg-slate-200 rounded-md">
-            <div class="grid grid-cols-5 items-start w-full">
-              <div class="text-center font-semibold text-md">Nama Buah</div>
-              <div class="text-center font-semibold text-md">
-                total keuntungan
+          <div class="flex flex-col w-full p-4" id="tableTransaction">
+            <div class="flex justify-between p-2 bg-slate-200 rounded-md">
+              <div class="grid grid-cols-5 items-start w-full">
+                <div class="text-center font-semibold text-md">
+                  tanggal transaksi
+                </div>
+                <div class="text-center font-semibold text-md">
+                  total keuntungan
+                </div>
+                <div class="text-center font-semibold text-md">
+                  pendapatan bersih
+                </div>
+                <div class="text-center font-semibold text-md">
+                  stok terjual
+                </div>
+                <div class="text-center font-semibold text-md">aksi</div>
               </div>
-              <div class="text-center font-semibold text-md">
-                pendapatan bersih
-              </div>
-              <div class="text-center font-semibold text-md">stok terjual</div>
-              <div class="text-center font-semibold text-md">aksi</div>
             </div>
-          </div>
-          <div
-            class="flex flex-col grow-0 overflow-y-auto h-[20.6rem]"
-            id="listTransaction">
-            <!--             
             <div
-              class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
-              <div class="text-base" id="nameProduct">Buah Naga</div>
-              <div class="text-base" id="priceProduct">30.000</div>
-              <div class="text-base" id="priceProduct">30.000</div>
-              <div class="text-base flex gap-2">
-                <button
-                  class="add-to-cart p-1 rounded bg-blue-500 text-white flex"
-                  id="deleteIncome"
-                  data-feather="shopping-cart" />
+              class="flex flex-col grow-0 overflow-y-auto h-[20.6rem]"
+              id="listTransaction">
+              <!--             
+              <div
+                class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
+                <div class="text-base" id="nameProduct">Buah Naga</div>
+                <div class="text-base" id="priceProduct">30.000</div>
+                <div class="text-base" id="priceProduct">30.000</div>
+                <div class="text-base flex gap-2">
+                  <button
+                    class="add-to-cart p-1 rounded bg-blue-500 text-white flex"
+                    id="deleteIncome"
+                    data-feather="shopping-cart" />
+                </div>
+              </div>
+               -->
+            </div>
+          </div>
+        </section>
+        <!-- 
+        <section
+          class="w-full rounded-md bg-white border border-neutral-300"
+          id="wrapperTransaction">
+          <h3 class="text-center text-xl font-semibold my-2">
+            catatan transaksi
+          </h3>
+
+          <div class="flex flex-col w-full p-4" id="tableTransaction">
+            <div class="flex justify-between p-2 bg-slate-200 rounded-md">
+              <div class="grid grid-cols-4 items-start w-full">
+                <div class="text-start font-semibold text-md">Nama Buah</div>
+                <div class="text-start font-semibold text-md">
+                  total keuntungan
+                </div>
+                <div class="text-start font-semibold text-md">
+                  pendapatan bersih
+                </div>
+                <div class="text-start font-semibold text-md">sisa stok</div>
               </div>
             </div>
-             -->
+            <div
+              class="flex flex-col grow-0 overflow-y-auto h-[20.6rem]"
+              id="listProduct">
+              <div
+                class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
+                <div class="text-base" id="nameProduct">Buah Naga</div>
+                <div class="text-base" id="priceProduct">30.000</div>
+                <div class="text-base" id="priceProduct">30.000</div>
+                <div class="text-base" id="priceProduct">30.000</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+         -->
+      </div>
     </main>
     <script src="index.js"></script>
   </body>

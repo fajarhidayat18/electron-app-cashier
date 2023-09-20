@@ -2,8 +2,10 @@ const { ipcRenderer } = require("electron");
 const feather = require("feather-icons");
 // =============================================================================
 const { formatCurrencyToRupiah } = require("./components/Utility");
+const { handleDeleteTransaction } = require("./components/Handler");
 // =============================================================================
 const listTransaction = document.getElementById("listTransaction");
+const listProduct = document.getElementById("listProduct");
 const totalProfit = document.getElementById("totalIncome");
 const totalSalesWeight = document.getElementById("totalSalesWeight");
 const tableTransaction = document.getElementById("tableTransaction");
@@ -15,7 +17,7 @@ window.addEventListener("load", () => {
   ipcRenderer.send("load:transaction-window");
 });
 // =============================================================================
-ipcRenderer.on("display:data-transaction", (e, receivedCashBook) => {
+ipcRenderer.on("display:data-transaction", (e, receivedCashBook, products) => {
   // ipcRenderer.send("clear-transaction");
   transactions = receivedCashBook;
   // console.log(transactions);
@@ -32,6 +34,7 @@ ipcRenderer.on("display:data-transaction", (e, receivedCashBook) => {
 
   if (transactions.length) {
     displayTransaction(transactions, listTransaction);
+    displayProducts(products, listProduct);
     totalProfit.innerHTML = formatCurrencyToRupiah(totalPurchasePrice);
     totalSalesWeight.innerHTML = totalPurchaseAmount + " Kg";
   } else {
@@ -44,12 +47,12 @@ ipcRenderer.on("display:data-transaction", (e, receivedCashBook) => {
 listTransaction.addEventListener("click", (e) => {
   if (e.target.classList.contains("delete")) {
     const id = e.target.parentElement.parentElement.id;
-    const resultTransactions = transactions.find((ledger) => ledger.id == id);
 
-    // console.log(resultTransactions.id);
-    ipcRenderer.send("delete:delete-transaction", resultTransactions.id);
+    handleDeleteTransaction(parseInt(id));
+    // const resultTransaction = transactions.find((ledger) => ledger.id == id);
+
     ipcRenderer.on("delete:transaction-deleted", () => {
-      ipcRenderer.send("load:ledger-window");
+      ipcRenderer.send("load:transaction-window");
     });
   }
 });
@@ -61,6 +64,25 @@ const cashierPage = () => {
   ipcRenderer.send("cashier-page");
 };
 // =============================================================================
+function displayProducts(datas, container) {
+  container.innerHTML = "";
+  datas.forEach((data) => {
+    const income = (data.sellingPrice - data.costPrice) * data.soldStock;
+    container.innerHTML += `
+    <div class="grid grid-cols-4 items-center place-items-start border-b border-neutral-300 py-5 px-2">
+      <div class="text-base" id="nameProduct">${data.name}</div>
+      <div class="text-base" id="priceProduct">${
+        data.sellingPrice * data.soldStock
+      }</div>
+      <div class="text-base" id="priceProduct">${income}</div>
+      <div class="text-base" id="priceProduct">${
+        data.stock - data.soldStock
+      }</div>
+    </div>
+        `;
+    console.log(data);
+  });
+}
 function displayTransaction(datas, container) {
   container.innerHTML = "";
   datas.forEach((data) => {
@@ -68,7 +90,6 @@ function displayTransaction(datas, container) {
     let totalGrossIncome = 0;
     let totalNetIncome = 0;
     let totalStockSold = 0;
-    let remainingStock = 0;
 
     // Iterasi melalui setiap item dalam cart
     data.carts.forEach((cartItem) => {

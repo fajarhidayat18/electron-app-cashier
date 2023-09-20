@@ -953,6 +953,10 @@ video {
   text-align: center;
 }
 
+.text-start {
+  text-align: start;
+}
+
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -1037,7 +1041,7 @@ video {
 }
 
 * {
-  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Montserrat", sans-serif;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }

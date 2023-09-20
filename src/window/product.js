@@ -33,24 +33,18 @@ formItem.addEventListener("submit", (e) => {
   // let unitOfPrice = document.getElementById("unitOfPrice");
 
   // asign data
-  const id = Date.now();
-  const soldStock = 0;
-  let name = nameItem.value;
-  let sellingPrice = sellingPriceItem.value;
-  let costPrice = costPriceItem.value;
-  let stock = stockItem.value;
-  let unit = "Kg";
+  const product = {
+    id: Date.now(),
+    soldStock: 0,
+    name: nameItem.value,
+    sellingPrice: sellingPriceItem.value,
+    costPrice: costPriceItem.value,
+    stock: stockItem.value,
+    unit: "Ons",
+  };
 
   // save data
-  handleAddProduct(
-    parseInt(id),
-    name,
-    parseInt(sellingPrice),
-    parseInt(costPrice),
-    parseInt(stock),
-    soldStock,
-    unit
-  );
+  handleAddProduct(product);
 
   // Receive a confirmation message from the main process
   ipcRenderer.on("product-saved", () => {

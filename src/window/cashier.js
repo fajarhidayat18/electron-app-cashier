@@ -145,7 +145,6 @@ cartContainer.addEventListener("click", (e) => {
   // clear cart
   if (e.target.classList.contains("clear")) {
     // Objek untuk menyimpan hasil gabungan data
-    // return console.log(carts);
     if (carts.length >= 1) {
       const cashbook = {
         id: Date.now(),
@@ -154,6 +153,15 @@ cartContainer.addEventListener("click", (e) => {
       };
       // Menggabungkan data dari objek carts
       cashbook.carts = carts.map((cart) => {
+        const productToUpdate = products.find(
+          (product) => product.id === cart.product.id
+        );
+
+        // Jika objek ditemukan, maka lakukan pembaruan nilai
+        if (productToUpdate) {
+          productToUpdate.soldStock += cart.amountProduct;
+        }
+
         return {
           id: cart.id,
           purchaseAmountProduct: cart.amountProduct,
@@ -170,7 +178,6 @@ cartContainer.addEventListener("click", (e) => {
           },
         };
       });
-
       // Menggabungkan data dari objek products
       /* productCashBook = products.map((product) => {
         return {
@@ -184,7 +191,7 @@ cartContainer.addEventListener("click", (e) => {
         };
       }); */
 
-      ipcRenderer.send("create:cashbook", cashbook);
+      ipcRenderer.send("create:transactions-data", cashbook);
 
       ipcRenderer.on("load:create-cash-book", (e, data) => {
         ipcRenderer.send("load:data-window");
@@ -193,7 +200,9 @@ cartContainer.addEventListener("click", (e) => {
     // return console.log("kosong");
   }
 });
+
 // =============================================================================
+
 function displayProducts(data, container) {
   container.innerHTML = ""; // empty container
 
