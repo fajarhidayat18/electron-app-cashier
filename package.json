@@ -4,7 +4,7 @@
   "version": "1.3.1",
   "description": "My Electron application description",
   "main": "src/main.js",
-  "env": "pr",
+  "env": "production",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
