@@ -31,15 +31,17 @@ formItem.addEventListener("submit", (e) => {
   let costPriceItem = document.getElementById("costPriceItem");
   let stockItem = document.getElementById("stockItem");
   // let unitOfPrice = document.getElementById("unitOfPrice");
-
+  if (parseInt(sellingPriceItem.value) <= parseInt(costPriceItem.value)) {
+    return alert("modal tidak boleh lebih besar dari harga jual");
+  }
   // asign data
   const product = {
     id: Date.now(),
-    soldStock: 0,
+    soldStock: null,
     name: nameItem.value,
-    sellingPrice: sellingPriceItem.value,
-    costPrice: costPriceItem.value,
-    stock: stockItem.value,
+    sellingPrice: parseInt(sellingPriceItem.value),
+    costPrice: parseInt(costPriceItem.value),
+    stock: parseInt(stockItem.value),
     unit: "Ons",
   };
 

@@ -146,13 +146,12 @@ cartContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("clear")) {
     // Objek untuk menyimpan hasil gabungan data
     if (carts.length >= 1) {
-      const cashbook = {
+      const transaction = {
         id: Date.now(),
-        products: [],
         carts: [],
       };
       // Menggabungkan data dari objek carts
-      cashbook.carts = carts.map((cart) => {
+      transaction.carts = carts.map((cart) => {
         const productToUpdate = products.find(
           (product) => product.id === cart.product.id
         );
@@ -167,32 +166,22 @@ cartContainer.addEventListener("click", (e) => {
           purchaseAmountProduct: cart.amountProduct,
           totalPurchasePriceProduct: cart.totalAmountProduct,
           product: {
-            idProduct: cart.product.id,
+            id: cart.product.id,
             name: cart.product.name,
             purchaseAmount: cart.product.purchaseAmount,
             totalPurchasePrice: cart.product.totalPurchasePrice,
             sellingPrice: cart.product.sellingPrice,
             costPrice: cart.product.costPrice,
-            stock: cart.product.stock,
+            stockSold: productToUpdate.soldStock,
             unit: cart.product.unit,
           },
         };
       });
-      // Menggabungkan data dari objek products
-      /* productCashBook = products.map((product) => {
-        return {
-          id: product.id,
-          name: product.name,
-          sellingPrice: product.sellingPrice,
-          costPrice: product.costPrice,
-          soldStock: aw,
-          stock: product.stock,
-          unit: product.unit,
-        };
-      }); */
-
-      ipcRenderer.send("create:transactions-data", cashbook);
-
+      // mengirim data ke main proses untuk menyimpan data transaksi
+      ipcRenderer.send("create:transactions-data", transaction, carts);
+      // menjalankan fungsi print
+      ipcRenderer.send("print:print-transaction", carts);
+      // menerima
       ipcRenderer.on("load:create-cash-book", (e, data) => {
         ipcRenderer.send("load:data-window");
       });
@@ -200,7 +189,52 @@ cartContainer.addEventListener("click", (e) => {
     // return console.log("kosong");
   }
 });
+// =============================================================================
+// Tangani pesan dari main process
+ipcRenderer.on("print-data", (event, dataToPrint) => {
+  // Import library ESC/POS yang sesuai
+  const escpos = require("escpos"); // Sesuaikan dengan library yang Anda gunakan
 
+  // Inisialisasi printer
+  const device = new escpos.USB(); // Ganti dengan jenis perangkat yang Anda gunakan
+  const printer = new escpos.Printer(device);
+
+  // Buat perintah cetak sesuai dengan format ESC/POS
+  // Misalnya, jika Anda ingin mencetak teks:
+
+  // Header struk
+  printer.text("==== Struk Pembayaran ====\n");
+
+  // Loop untuk mencetak setiap item
+  datas.forEach((data) => {
+    printer
+      .text(data.product.name)
+      .text(`${data.product.sellingPrice} x ${data.amountProduct}`)
+      .text(`${data.product.sellingPrice * data.amountProduct}`);
+  });
+
+  // Garis pemisah
+  printer.text("========================\n");
+
+  // Total
+  const total = datas.reduce(
+    (accumulator, currentValue) =>
+      accumulator + currentValue.totalAmountProduct,
+    0
+  );
+  printer.text(`Total : ${total}\n`);
+
+  printer.text("========================\n");
+  printer.align("CT").text("terima kasih telah berbelanja\n");
+  // Jika Anda memiliki data tambahan yang ingin dicetak dari "dataToPrint",
+  // Anda dapat menambahkannya ke perintah cetak di sini.
+
+  // Akhiri sesi cetak
+  printer.cut();
+
+  // Tutup perangkat
+  device.close();
+});
 // =============================================================================
 
 function displayProducts(data, container) {

@@ -95,7 +95,7 @@ ipcMain.on("product-page", () => {
 const createProductWindow = () => {
   // create the Product window
   productWindow = new BrowserWindow({
-    width: 900,
+    width: 800,
     height: 700,
     icon: __dirname + "/assets/icons/cashier.png",
     title: `${title} | Product`,
@@ -176,7 +176,7 @@ const createCashierWindow = () => {
   // create the cashier window
   cashierWindow = new BrowserWindow({
     width: 800,
-    height: 700,
+    height: 600,
     icon: __dirname + "/assets/icons/cashier.png",
     title: `${title} | Cashier`,
     webPreferences: {
@@ -236,14 +236,32 @@ const createCashierWindow = () => {
     event.sender.send("update:cart-deleted");
   });
 
-  ipcMain.on("create:transactions-data", (e, data) => {
+  ipcMain.on("create:transactions-data", (e, transaction) => {
     const currentTransactions = store.get("transactions", []);
+    const currentproducts = store.get("products", []);
 
-    const produkSudahAda = currentTransactions.some(function (item) {
-      return item.id === data.id;
+    transaction.carts.forEach((cartItem) => {
+      const purchaseAmount = cartItem.purchaseAmountProduct;
+      const id = cartItem.product.id;
+      // Temukan objek produk yang sesuai berdasarkan ID
+      const productToUpdate = currentproducts.find(
+        (product) => product.id === id
+      );
+
+      if (productToUpdate) {
+        // Tambahkan nilai purchaseAmount ke soldStock
+        productToUpdate.soldStock += purchaseAmount;
+
+        // Simpan array currentproducts yang telah diperbarui kembali ke store
+        store.set("products", currentproducts);
+      }
     });
 
-    if (!produkSudahAda) currentTransactions.push(data);
+    const produkSudahAda = currentTransactions.some(function (item) {
+      return item.id === transaction.id;
+    });
+
+    if (!produkSudahAda) currentTransactions.push(transaction);
 
     store.set("transactions", currentTransactions);
     store.set("cartsShopping", []);
@@ -258,6 +276,12 @@ const createCashierWindow = () => {
 };
 // ===========================================================================
 // ===========================================================================
+// Tangani pesan dari renderer process
+ipcMain.on("print:print-transaction", (event, dataToPrint) => {
+  // Kirim pesan ke jendela renderer yang sesuai
+  const window = BrowserWindow.getFocusedWindow(); // Atau sesuaikan dengan cara Anda mengelola jendela
+  window.webContents.send("print-data", dataToPrint);
+});
 // ===========================================================================
 // Handle Print page
 ipcMain.on("print-data", (event, data) => {

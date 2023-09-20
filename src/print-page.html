@@ -37,19 +37,22 @@
       // Tanggapi pesan dari jendela utama untuk menerima data
       ipcRenderer.on("data-ke-jendela-baru", (event, data) => {
         data.forEach((data) => {
+          console.log(data);
           wrapperList.innerHTML += `
             <div class="grid grid-cols-[1fr_0.1fr_0.4fr_0.5fr] gap-4">
-          <span>${data.name}</span>
-          <span>${data.amount}</span>
-          <span>${formatCurrencyToRupiah(data.price)}</span>
-          <span>${formatCurrencyToRupiah(data.amountPrice)}</span>
+          <span>${data.product.name}</span>
+          <span>${formatCurrencyToRupiah(data.product.sellingPrice)}</span>
+          <span>${data.amountProduct}</span>
+          <span>${formatCurrencyToRupiah(
+            data.product.sellingPrice * data.amountProduct
+          )}</span>
         </div>
             `;
         });
         totalPrice.innerText = formatCurrencyToRupiah(
           data.reduce(
             (accumulator, currentValue) =>
-              accumulator + currentValue.amountPrice,
+              accumulator + currentValue.totalAmountProduct,
             0
           )
         );
