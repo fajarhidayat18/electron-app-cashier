@@ -6,9 +6,9 @@ const { handleDeleteTransaction } = require("./components/Handler");
 // =============================================================================
 const listTransaction = document.getElementById("listTransaction");
 const listProduct = document.getElementById("listProduct");
-const totalProfit = document.getElementById("totalIncome");
-const totalSalesWeight = document.getElementById("totalSalesWeight");
 const tableTransaction = document.getElementById("tableTransaction");
+const totalIncome = document.getElementById("totalIncome");
+const totalSalesWeight = document.getElementById("totalSalesWeight");
 // =============================================================================
 feather.replace();
 let transactions = [];
@@ -27,16 +27,17 @@ ipcRenderer.on("display:data-transaction", (e, receivedCashBook, products) => {
 
   transactions.forEach((transaction) => {
     transaction.carts.forEach((cart) => {
+      console.log(cart);
       totalPurchaseAmount += cart.purchaseAmountProduct;
       totalPurchasePrice += cart.totalPurchasePriceProduct;
     });
   });
 
   if (transactions.length) {
+    totalIncome.innerHTML = formatCurrencyToRupiah(totalPurchasePrice);
+    totalSalesWeight.innerHTML = totalPurchaseAmount + " Kg";
     displayTransaction(transactions, listTransaction);
     displayProducts(products, listProduct);
-    totalProfit.innerHTML = formatCurrencyToRupiah(totalPurchasePrice);
-    totalSalesWeight.innerHTML = totalPurchaseAmount + " Kg";
   } else {
     tableTransaction.innerHTML = `<h5 class="text-center">belum ada penjualan</h5>`;
     totalProfit.innerHTML = formatCurrencyToRupiah(0);
