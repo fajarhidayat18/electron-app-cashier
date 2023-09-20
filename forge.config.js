@@ -12,7 +12,7 @@ module.exports = {
         // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
         icon: __dirname + "/src/assets/icons/cashier.png",
         // The ICO file to use as the icon for the generated Setup.exe
-        setupIcon: __dirname + "/src/assets/icons/cashier.png",
+        setupIcon: __dirname + "/src/assets/icons/cashier.ico",
       },
     },
     {
