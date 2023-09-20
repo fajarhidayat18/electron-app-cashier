@@ -95,6 +95,7 @@ const createProductWindow = () => {
   productWindow = new BrowserWindow({
     width: 900,
     height: 700,
+    icon: __dirname + "/assets/icons/cashier.png",
     title: `${title} | Product`,
     webPreferences: {
       nodeIntegration: true,
@@ -171,6 +172,7 @@ const createCashierWindow = () => {
   cashierWindow = new BrowserWindow({
     width: 800,
     height: 700,
+    icon: __dirname + "/assets/icons/cashier.png",
     title: `${title} | Cashier`,
     webPreferences: {
       nodeIntegration: true,
